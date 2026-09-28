@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penilaian Diri Sendiri PAIBP - SMAN 1 Krembung</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Amiri for Islamic Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Amiri:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .font-arabic {
+            font-family: 'Amiri', serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: white;
+            }
+            .print-card {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased">
+
+    <header class="bg-gradient-to-r from-emerald-800 via-teal-800 to-emerald-950 text-white shadow-xl sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 text-center sm:text-left">
+                <a href="#" class="bg-white p-1.5 rounded-full shadow-md hover:scale-105 transition-transform">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhjhEe7DsQaweQWtckuBY0QdRPB_J0RbHqfSXb0fFnNGOQYwfzbn9SyTV1WORteNpd7S3rcGj3FYpaCf0X7tjQpcXoDfErD-aWPD9kTf-6auJIoAZ3ETmXpvuoVydS7H87HO-vidqv4ECyayUG4dFJNZNMuVWD2lUyaMaF7ox5BYCfAksicgx7ryvy6V56Z/s1600/LOGO%20SMANIKRE%20(1).png" 
+                         alt="Logo SMANIKRE" 
+                         class="h-16 w-16 sm:h-20 sm:w-20 object-contain">
+                </a>
+                <div>
+                    <span class="bg-amber-400 text-emerald-950 text-xs font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                        SMA NEGERI 1 KREMBUNG
+                    </span>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight mt-1 text-emerald-100">
+                        Aplikasi Penilaian Diri Sendiri <span class="text-amber-300">(Self-Assessment)</span>
+                    </h1>
+                    <p class="text-xs sm:text-sm text-emerald-200 font-light">
+                        Pendidikan Agama Islam & Budi Pekerti • Refleksi Diri & Deep Learning
+                    </p>
+                </div>
+            </div>
+            
+            <button onclick="toggleSettingsModal()" class="no-print bg-emerald-700/80 hover:bg-emerald-600 text-xs flex items-center gap-2 px-3.5 py-2.5 rounded-xl border border-emerald-500/50 transition shadow-xs font-medium">
+                <i class="fa-solid fa-sliders text-amber-300"></i>
+                <span>Pengaturan Integration</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 py-6 w-full flex-grow space-y-6">
+
+        <!-- Banner Info Kurikulum -->
+        <div class="bg-emerald-50 border-l-4 border-emerald-600 p-4 rounded-r-xl shadow-xs flex items-start gap-3">
+            <i class="fa-solid fa-brain text-emerald-600 text-xl mt-0.5"></i>
+            <div class="text-xs sm:text-sm text-emerald-950 leading-relaxed">
+                <span class="font-bold">Panduan Refleksi Diri:</span> Jawablah dengan jujur sesuai kondisi dan perilaku diri Anda sehari-hari (*Mindful & Meaningful Learning*). Penilaian ini melatih kesadaran diri (*Self-Awareness*) pada materi <strong>Q.S. Al-Ma'idah: 48</strong> (Berkompetisi dalam Kebaikan), <strong>Q.S. At-Taubah: 105</strong> (Etos Kerja), dan <strong>Syu'abul Iman</strong>.
+            </div>
+        </div>
+
+        <!-- Custom Notification Toast Box -->
+        <div id="toastBox" class="hidden bg-emerald-900 text-white p-4 rounded-xl shadow-lg border border-emerald-600 flex items-center justify-between gap-3 transition-all">
+            <div class="flex items-center gap-3">
+                <i id="toastIcon" class="fa-solid fa-circle-info text-amber-300 text-xl"></i>
+                <p id="toastMessage" class="text-xs sm:text-sm font-medium"></p>
+            </div>
+            <button onclick="hideToast()" class="text-emerald-300 hover:text-white text-xs px-2 py-1">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+        </div>
+
+        <!-- FORM UTAMA PENILAIAN DIRI -->
+        <form id="selfAssessmentForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/80 space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-emerald-600"></i>
+                        Identitas Peserta Didik
+                    </h2>
+                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">Langkah 1 dari 3</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="sm:col-span-1">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Siswa <span class="text-red-500">*</span></label>
+                        <input type="text" id="siswaNama" required placeholder="Masukkan Nama Lengkap Anda"
+                            class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-slate-50/50 focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Kelas <span class="text-red-500">*</span></label>
+                        <select id="siswaKelas" required class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50/50 focus:bg-white">
+                            <option value="">-- Pilih Kelas --</option>
+                            <!-- Populated dynamically via JS X-1 to X-12 -->
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">No. Presensi / Absen <span class="text-red-500">*</span></label>
+                        <select id="siswaAbsen" required class="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none bg-slate-50/50 focus:bg-white">
+                            <option value="">-- Pilih No. Absen --</option>
+                            <!-- Populated dynamically 1 to 36 -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KETERANGAN SKOR PENILAIAN DIRI -->
+            <div class="bg-emerald-950 text-white border border-emerald-800 rounded-2xl p-4 text-xs sm:text-sm grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xs">
+                <div class="bg-emerald-900/90 p-2.5 rounded-xl border border-emerald-700">
+                    <span class="font-extrabold text-amber-300 text-base block">Skor 4</span>
+                    <span class="text-emerald-100 text-xs">Selalu (Konsisten dilakukan)</span>
+                </div>
+                <div class="bg-emerald-900/90 p-2.5 rounded-xl border border-emerald-700">
+                    <span class="font-extrabold text-emerald-300 text-base block">Skor 3</span>
+                    <span class="text-emerald-100 text-xs">Sering (Hampir selalu dilakukan)</span>
+                </div>
+                <div class="bg-emerald-900/90 p-2.5 rounded-xl border border-emerald-700">
+                    <span class="font-extrabold text-sky-300 text-base block">Skor 2</span>
+                    <span class="text-emerald-100 text-xs">Kadang-kadang (Belum konsisten)</span>
+                </div>
+                <div class="bg-emerald-900/90 p-2.5 rounded-xl border border-emerald-700">
+                    <span class="font-extrabold text-rose-300 text-base block">Skor 1</span>
+                    <span class="text-emerald-100 text-xs">Tidak Pernah</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-600"></i>
+                        Lembar Refleksi & Penilaian Diri Sendiri
+                    </h2>
+                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">Langkah 2 dari 3</span>
+                </div>
+
+                <!-- SUB MATERI UTAMA: TILAWAH & TAHFIZH -->
+                <div class="space-y-4">
+                    <div class="bg-emerald-900 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-700 text-amber-300 font-bold px-2 py-0.5 rounded text-xs">A</span>
+                            <span>Kemampuan Membaca & Menghafal Al-Qur'an (Tilawah & Tahfizh)</span>
+                        </div>
+                        <span class="font-arabic text-amber-300 text-base hidden sm:inline">اقْرَأْ وَارْتَقِ</span>
+                    </div>
+
+                    <div class="space-y-3" id="sectionTilawah">
+                        <!-- Indikator 1: Membaca -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">1. Kemampuan Tilawah (Membaca Al-Qur'an)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya sudah dapat membaca dengan baik dan benar sesuai kaidah tajwid Q.S. Al-Ma'idah: 48 dan Q.S. At-Taubah: 105.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q1"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 2: Menghafal -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">2. Kemampuan Tahfizh (Menghafal Al-Qur'an)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya sudah menghafal dengan baik, lancar, dan benar Q.S. Al-Ma'idah: 48 dan Q.S. At-Taubah: 105.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB MATERI B -->
+                <div class="space-y-4 pt-2">
+                    <div class="bg-emerald-900 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-700 text-amber-300 font-bold px-2 py-0.5 rounded text-xs">B</span>
+                            <span>Q.S. Al-Ma'idah: 48 (Berkompetisi dalam Kebaikan)</span>
+                        </div>
+                        <span class="font-arabic text-amber-300 text-base hidden sm:inline">فَاسْتَبِقُوا الْخَيْرَاتِ</span>
+                    </div>
+
+                    <div class="space-y-3" id="sectionA">
+                        <!-- Indikator 3 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">3. Inisiatif Berbuat Baik (*Fastabiqul Khairat*)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya berinisiatif menyegerakan kebaikan (belajar, beribadah, membantu teman) tanpa harus menunggu diperintah atau ditegur.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 4 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">4. Komitmen Kualitas Terbaik (*Ihsan*)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya berusaha bersungguh-sungguh memberikan hasil/karya terbaik saya dalam setiap tugas PAIBP dan kegiatan sekolah.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q4"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 5 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">5. Lapang Dada & Bebas Iri Dengki</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya merasa senang melihat keberhasilan teman lain dan terpacu untuk belajar dari mereka tanpa rasa iri atau minder.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB MATERI C -->
+                <div class="space-y-4 pt-2">
+                    <div class="bg-emerald-900 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-700 text-amber-300 font-bold px-2 py-0.5 rounded text-xs">C</span>
+                            <span>Q.S. At-Taubah: 105 (Etos Kerja Islam & Tanggung Jawab)</span>
+                        </div>
+                        <span class="font-arabic text-amber-300 text-base hidden sm:inline">وَقُلِ اعْمَلُوا</span>
+                    </div>
+
+                    <div class="space-y-3" id="sectionB">
+                        <!-- Indikator 6 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">6. Kedisiplinan & Manajemen Waktu</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya memanfaatkan waktu luang secara produktif dan mengumpulkan tugas tepat waktu sesuai kesepakatan.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q6"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 7 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">7. Kejujuran Akademik & Integritas</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya mengerjakan kuis/tugas secara jujur (tanpa plagiasi/menyontek) karena meyakini Allah Maha Melihat perbuatan saya.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q7"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 8 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">8. Resiliensi & Pantang Menyerah</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya tidak mudah putus asa saat menemukan kesulitan belajar dan aktif bertanya/berusaha mencari solusi.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q8"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB MATERI D -->
+                <div class="space-y-4 pt-2">
+                    <div class="bg-emerald-900 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-between shadow-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="bg-emerald-700 text-amber-300 font-bold px-2 py-0.5 rounded text-xs">D</span>
+                            <span>Syu'abul Iman (Implementasi Cabang-cabang Iman)</span>
+                        </div>
+                        <span class="font-arabic text-amber-300 text-base hidden sm:inline">شُعَبُ الْإِيمَانِ</span>
+                    </div>
+
+                    <div class="space-y-3" id="sectionC">
+                        <!-- Indikator 9 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">9. Menjaga Kesantunan Lisan (*Lisanul Iman*)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya menjaga lisan saya dari kata-kata kotor, ghibah, atau ucapan yang dapat merendahkan teman di sekolah/dunia maya.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q9"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 10 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">10. Empati & Ringan Tangan (*Amalun Bil Arkan*)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya peduli dan bersedia membantu sesama teman yang membutuhkan bantuan tanpa pamrih.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q10"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indikator 11 -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 hover:border-emerald-400 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="space-y-1">
+                                    <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide">11. Keikhlasan & Tawadhu (*Iqrarun Bil Qalbi*)</span>
+                                    <p class="text-sm font-medium text-slate-800">Saya bersikap rendah hati, mau mendengarkan kritik/saran, serta meluruskan niat semata-mata karena Allah SWT.</p>
+                                </div>
+                                <div class="flex gap-2 justify-between sm:justify-end" data-q="q11"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-xs border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-nib text-emerald-600"></i>
+                        Refleksi Kualitatif & Komitmen Diri
+                    </h2>
+                    <span class="text-xs font-semibold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">Langkah 3 dari 3</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fa-solid fa-thumbs-up text-emerald-600 mr-1"></i> Hal Baik yang Sudah Konsisten Saya Lakukan <span class="text-red-500">*</span>
+                        </label>
+                        <p class="text-xs text-slate-500 mb-2">Refleksikan kebiasaan positif yang paling Anda banggakan dalam hal etos kerja atau kebaikan.</p>
+                        <textarea id="refleksiPositif" required rows="3" placeholder="Contoh: Saya selalu berusaha tepat waktu mengumpulkan tugas dan selalu membantu teman yang kesulitan..."
+                            class="w-full p-3 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none transition resize-none bg-slate-50/50 focus:bg-white"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">
+                            <i class="fa-solid fa-bullseye text-amber-500 mr-1"></i> Rencana Aksi Perbaikan Diri (Action Plan) <span class="text-red-500">*</span>
+                        </label>
+                        <p class="text-xs text-slate-500 mb-2">Sebutkan 1-2 langkah nyata yang akan Anda tingkatkan untuk menjadi pribadi yang lebih beriman & produktif.</p>
+                        <textarea id="rencanaAksi" required rows="3" placeholder="Contoh: Saya akan mengurangi main game di malam hari agar bisa bangun subuh tepat waktu dan tidak terburu-buru..."
+                            class="w-full p-3 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none transition resize-none bg-slate-50/50 focus:bg-white"></textarea>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-emerald-950 via-teal-900 to-emerald-900 text-white p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md border border-emerald-700/50">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-emerald-800/90 p-3 rounded-2xl text-amber-300 text-3xl font-extrabold flex items-center justify-center h-16 w-16 border border-emerald-500/50 shadow-inner">
+                            <span id="scoreDisplay">0</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-emerald-300 uppercase tracking-widest font-semibold block">Skor & Predikat Refleksi</span>
+                            <div class="text-lg font-bold text-white flex items-center gap-2">
+                                <span id="nilaiAkhirDisplay">0.0</span> <span class="text-xs text-emerald-300 font-normal">/ 100</span>
+                            </div>
+                            <p id="kategoriDisplay" class="text-xs text-amber-300 font-medium mt-0.5">Belum semua indikator diisi</p>
+                        </div>
+                    </div>
+
+                    <div class="text-right w-full sm:w-auto">
+                        <button type="submit" id="submitBtn" 
+                            class="w-full sm:w-auto bg-amber-400 hover:bg-amber-300 text-emerald-950 font-extrabold px-6 py-3 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Simpan & Kirim Refleksi Diri</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <div id="resultCard" class="hidden bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-emerald-200 print-card space-y-6">
+            <div class="text-center space-y-2 border-b pb-5 border-slate-200">
+                <div class="inline-flex p-3 bg-emerald-100 text-emerald-800 rounded-full mb-1 no-print">
+                    <i class="fa-solid fa-award text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-800">Bukti Lembar Penilaian Diri Sendiri</h3>
+                <p class="text-xs sm:text-sm text-slate-600">SMA Negeri 1 Krembung • Mata Pelajaran PAIBP</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase block">Nama Siswa:</span>
+                    <p class="font-bold text-slate-800" id="resNama">-</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase block">Kelas:</span>
+                    <p class="font-bold text-slate-800" id="resKelas">-</p>
+                </div>
+                <div>
+                    <span class="text-xs font-semibold text-slate-500 uppercase block">No. Presensi:</span>
+                    <p class="font-bold text-slate-800" id="resAbsen">-</p>
+                </div>
+            </div>
+
+            <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-center justify-between">
+                <div>
+                    <span class="text-xs font-bold text-emerald-800 uppercase block">Hasil Refleksi Diri</span>
+                    <div class="text-2xl font-extrabold text-emerald-950" id="resNilai">0 / 100</div>
+                </div>
+                <div class="text-right">
+                    <span id="resKategoriBadge" class="px-3 py-1.5 bg-emerald-700 text-white font-bold rounded-full text-xs shadow-xs">
+                        -
+                    </span>
+                </div>
+            </div>
+
+            <div class="space-y-4 text-sm bg-slate-50/50 p-4 rounded-xl border border-slate-200">
+                <div class="border-b pb-3">
+                    <span class="font-bold text-slate-700 block text-xs uppercase tracking-wide text-emerald-800">
+                        <i class="fa-solid fa-thumbs-up mr-1"></i> Hal Positif Diri:
+                    </span>
+                    <p class="text-slate-800 italic mt-1" id="resPositif">-</p>
+                </div>
+                <div>
+                    <span class="font-bold text-slate-700 block text-xs uppercase tracking-wide text-amber-700">
+                        <i class="fa-solid fa-bullseye mr-1"></i> Rencana Aksi Perbaikan (Action Plan):
+                    </span>
+                    <p class="text-slate-800 italic mt-1" id="resAksi">-</p>
+                </div>
+            </div>
+
+            <div class="no-print pt-4 flex flex-col sm:flex-row gap-3 justify-center">
+                <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan Ke PDF
+                </button>
+                <button onclick="resetForm()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-6 py-2.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-rotate-left"></i> Isi Refleksi Baru
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative border border-slate-100">
+            <button onclick="toggleSettingsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center gap-3 border-b pb-3 border-slate-100">
+                <i class="fa-solid fa-table-cells text-emerald-600 text-2xl"></i>
+                <div>
+                    <h3 class="font-bold text-slate-800 text-base">Integrasi Google Sheets (Penilaian Diri)</h3>
+                    <p class="text-xs text-slate-500">Penyusun: Ulfatul Husna, S.Ag., M.Pd.</p>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-600 leading-relaxed">
+                Masukkan URL Google Apps Script Web App agar data Penilaian Diri Sendiri tersimpan otomatis ke Spreadsheet Anda.
+            </p>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Web App URL Google Sheets</label>
+                <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+                    class="w-full p-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+            </div>
+
+            <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs text-emerald-950 space-y-2">
+                <p class="font-bold"><i class="fa-solid fa-code text-emerald-700"></i> Apps Script Handler Code:</p>
+                <button onclick="copyAppsScriptCode()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-copy"></i> Copy Backend Script
+                </button>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="saveSettings()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer">
+                    Simpan Pengaturan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-slate-300 mt-12 border-t-4 border-amber-400">
+        <div class="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="flex items-center gap-3">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhjhEe7DsQaweQWtckuBY0QdRPB_J0RbHqfSXb0fFnNGOQYwfzbn9SyTV1WORteNpd7S3rcGj3FYpaCf0X7tjQpcXoDfErD-aWPD9kTf-6auJIoAZ3ETmXpvuoVydS7H87HO-vidqv4ECyayUG4dFJNZNMuVWD2lUyaMaF7ox5BYCfAksicgx7ryvy6V56Z/s1600/LOGO%20SMANIKRE%20(1).png" 
+                     alt="Logo SMANIKRE Footer" class="h-10 w-10 object-contain bg-white rounded-full p-0.5">
+                <div>
+                    <p class="text-sm font-bold text-white">SMA Negeri 1 Krembung</p>
+                    <p class="text-xs text-amber-300 font-medium">
+                        disusun oleh : Ulfatul Husna, S.Ag., M.Pd.
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-xs text-slate-400">
+                <p>Mata Pelajaran Pendidikan Agama Islam & Budi Pekerti</p>
+                <p class="text-emerald-400">© <span id="currentYear"></span> SMAN 1 Krembung. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        const TOTAL_QUESTIONS = 11;
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxYRfUmkQukvrhdnaLE1cimCcnHjEew9azdu_iGkaUfCRaiJau-4tRWWuLMsCPZQLj_eQ/exec';
+        let scriptUrl = localStorage.getItem('smanikre_self_script_url') || DEFAULT_SCRIPT_URL;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            populateDropdowns('siswaKelas', 'X-', 12);
+            populateDropdowns('siswaAbsen', '', 36);
+            renderRadioButtons();
+            
+            if (document.getElementById('scriptUrlInput')) {
+                document.getElementById('scriptUrlInput').value = scriptUrl;
+            }
+        });
+
+        function populateDropdowns(id, prefix, count) {
+            const sel = document.getElementById(id);
+            for (let i = 1; i <= count; i++) {
+                const val = prefix + i;
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = val;
+                sel.appendChild(opt);
+            }
+        }
+
+        function renderRadioButtons() {
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const container = document.querySelector(`[data-q="q${i}"]`);
+                if (!container) continue;
+
+                let html = '';
+                for (let score = 4; score >= 1; score--) {
+                    html += `
+                        <label class="flex items-center gap-1 bg-white hover:bg-emerald-50 px-3 py-1.5 rounded-xl border border-slate-300 cursor-pointer transition text-xs font-bold select-none shadow-2xs">
+                            <input type="radio" name="q${i}" value="${score}" required onchange="calculateScore()" class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                            <span>${score}</span>
+                        </label>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+        }
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastBox');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            if (isError) {
+                toast.className = "bg-rose-900 text-white p-4 rounded-xl shadow-lg border border-rose-600 flex items-center justify-between gap-3 transition-all";
+                toastIcon.className = "fa-solid fa-circle-exclamation text-amber-300 text-xl";
+            } else {
+                toast.className = "bg-emerald-950 text-white p-4 rounded-xl shadow-lg border border-emerald-600 flex items-center justify-between gap-3 transition-all";
+                toastIcon.className = "fa-solid fa-circle-check text-amber-300 text-xl";
+            }
+
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 5000);
+        }
+
+        function hideToast() {
+            document.getElementById('toastBox').classList.add('hidden');
+        }
+
+        function calculateScore() {
+            let total = 0;
+            let answered = 0;
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                const checked = document.querySelector(`input[name="q${i}"]:checked`);
+                if (checked) {
+                    total += parseInt(checked.value);
+                    answered++;
+                }
+            }
+
+            document.getElementById('scoreDisplay').textContent = total;
+            
+            const maxScore = TOTAL_QUESTIONS * 4;
+            const nilaiAkhir = ((total / maxScore) * 100).toFixed(1);
+            document.getElementById('nilaiAkhirDisplay').textContent = nilaiAkhir;
+
+            const kategoriElem = document.getElementById('kategoriDisplay');
+
+            if (answered < TOTAL_QUESTIONS) {
+                kategoriElem.textContent = `Terisi ${answered} dari ${TOTAL_QUESTIONS} indikator`;
+                kategoriElem.className = "text-xs text-amber-300 font-medium mt-0.5";
+            } else {
+                let text = "";
+                let colorClass = "";
+                if (nilaiAkhir >= 86) {
+                    text = "Sangat Baik (Istiqamah & Beretos Tinggi)";
+                    colorClass = "text-amber-300 font-extrabold";
+                } else if (nilaiAkhir >= 71) {
+                    text = "Baik (Mencapai Ketuntasan)";
+                    colorClass = "text-emerald-300 font-bold";
+                } else if (nilaiAkhir >= 56) {
+                    text = "Cukup (Perlu Pembiasaan Kebiasaan Baik)";
+                    colorClass = "text-amber-200 font-bold";
+                } else {
+                    text = "Perlu Bimbingan Khusus (Self-Correction)";
+                    colorClass = "text-rose-300 font-bold";
+                }
+                kategoriElem.textContent = text;
+                kategoriElem.className = `text-xs mt-0.5 ${colorClass}`;
+            }
+
+            return { total, nilaiAkhir, answered, maxScore };
+        }
+
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const calc = calculateScore();
+            if (calc.answered < TOTAL_QUESTIONS) {
+                showToast(`Harap isi semua ${TOTAL_QUESTIONS} indikator penilaian diri sebelum mengirim!`, true);
+                return;
+            }
+
+            const formData = {
+                type: "penilaian_diri",
+                timestamp: new Date().toLocaleString('id-ID'),
+                siswaNama: document.getElementById('siswaNama').value.trim(),
+                siswaKelas: document.getElementById('siswaKelas').value,
+                siswaAbsen: document.getElementById('siswaAbsen').value,
+                refleksiPositif: document.getElementById('refleksiPositif').value.trim(),
+                rencanaAksi: document.getElementById('rencanaAksi').value.trim(),
+                skorTotal: calc.total,
+                nilaiAkhir: calc.nilaiAkhir,
+                kategori: document.getElementById('kategoriDisplay').textContent
+            };
+
+            for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+                formData[`q${i}`] = document.querySelector(`input[name="q${i}"]:checked`).value;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...`;
+
+            if (scriptUrl) {
+                try {
+                    await fetch(scriptUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    showToast("Refleksi diri Anda berhasil disimpan ke Google Sheets!");
+                } catch (err) {
+                    console.warn("Koneksi ke Web App Google Sheets terganggu:", err);
+                    showToast("Tersimpan secara lokal. Gagal terhubung ke Google Sheets.", true);
+                }
+            } else {
+                showToast("Refleksi diri berhasil dibuat!");
+            }
+
+            // Populate Result Display
+            document.getElementById('resNama').textContent = formData.siswaNama;
+            document.getElementById('resKelas').textContent = formData.siswaKelas;
+            document.getElementById('resAbsen').textContent = formData.siswaAbsen;
+
+            document.getElementById('resNilai').textContent = `${formData.nilaiAkhir} / 100 (Skor Total: ${formData.skorTotal}/${calc.maxScore})`;
+            document.getElementById('resKategoriBadge').textContent = formData.kategori;
+            
+            document.getElementById('resPositif').textContent = `"${formData.refleksiPositif}"`;
+            document.getElementById('resAksi').textContent = `"${formData.rencanaAksi}"`;
+
+            // Toggle view
+            document.getElementById('selfAssessmentForm').classList.add('hidden');
+            document.getElementById('resultCard').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+
+        function resetForm() {
+            document.getElementById('selfAssessmentForm').reset();
+            document.getElementById('selfAssessmentForm').classList.remove('hidden');
+            document.getElementById('resultCard').classList.add('hidden');
+            calculateScore();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function saveSettings() {
+            const url = document.getElementById('scriptUrlInput').value.trim();
+            localStorage.setItem('smanikre_self_script_url', url);
+            scriptUrl = url;
+            showToast("Pengaturan URL Web App Google Sheets berhasil diperbarui!");
+            toggleSettingsModal();
+        }
+
+        function copyAppsScriptCode() {
+            const code = `function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Penilaian Diri") || ss.insertSheet("Penilaian Diri");
+  var data = JSON.parse(e.postData.contents);
+  
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow([
+      "Timestamp", "Nama Siswa", "Kelas", "No Absen",
+      "Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8", "Q9",
+      "Skor Total", "Nilai Akhir", "Kategori", "Hal Positif Diri", "Rencana Aksi"
+    ]);
+  }
+  
+  sheet.appendRow([
+    data.timestamp, data.siswaNama, data.siswaKelas, data.siswaAbsen,
+    data.q1, data.q2, data.q3, data.q4, data.q5, data.q6, data.q7, data.q8, data.q9,
+    data.skorTotal, data.nilaiAkhir, data.kategori, data.refleksiPositif, data.rencanaAksi
+  ]);
+  
+  return ContentService.createTextOutput("Success").setMimeType(ContentService.MimeType.TEXT);
+}`;
+
+            const copySuccess = () => showToast("Kode Apps Script Penilaian Diri berhasil disalin ke clipboard!");
+            
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(code).then(copySuccess).catch(() => fallbackCopy(code));
+            } else {
+                fallbackCopy(code);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast("Kode Apps Script Penilaian Diri berhasil disalin!");
+        }
+    </script>
+</body>
+</html>
